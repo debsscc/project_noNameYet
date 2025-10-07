@@ -4,8 +4,8 @@ class_name Player
 
 # -- Configurações de movimento --
 @export var velocidade: float = 80.0
-@export var multiplicador_corrida: float = 1.8
-@export var forca_pulo: float = 300.0
+@export var multiplicador_corrida: float = 5.0
+@export var forca_pulo: float = 200.0
 @export var gravidade: float = 600.0
 
 # -- Referências --
@@ -25,7 +25,7 @@ var morto: bool = false
 var pode_atirar: bool = true
 
 # -- Sistema de vida --
-@export var vida_maxima: int = 90
+@export var vida_maxima: int = 3
 var vida_atual: int
 var invencivel: bool = false
 @export var tempo_invencibilidade: float = 1.0
@@ -41,11 +41,16 @@ func _physics_process(delta: float) -> void:
 	
 	print("is_on_floor(): ", is_on_floor(), " | Velocity Y: ", velocity.y)
 
-	# Gravidade
+	# Jumping
 	if not is_on_floor():
 		velocity.y += gravidade * delta
 	else:
 		velocity.y = 0  # Reseta a gravidade quando no chão
+		
+	if is_on_floor() and Input.is_action_just_pressed("jump"):
+		velocity.y = -forca_pulo #pula!
+	
+	
 	
 	# Pausa movimentação durante ações
 	if esta_atirando:
@@ -64,13 +69,9 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity.x = 0
 	
-	# Movimento final
 	move_and_slide()
-	
-	# **ESSA LINHA ESTAVA FALTANDO - Atualiza as animações**
 	atualizar_animacoes()
 
-# **FUNÇÃO QUE ESTAVA FALTANDO NO SEU CÓDIGO**
 func atualizar_animacoes() -> void:
 	if morto:
 		return

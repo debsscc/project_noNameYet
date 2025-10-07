@@ -1,7 +1,26 @@
-[gd_scene load_steps=2 format=3 uid="uid://difx3ebqhs4hu"]
+[gd_scene load_steps=5 format=3 uid="uid://difx3ebqhs4hu"]
 
 [ext_resource type="PackedScene" uid="uid://beby82wnfkt4d" path="res://characters/player.tscn" id="1_ka2pi"]
+[ext_resource type="Texture2D" uid="uid://ciwjmob4fnhyy" path="res://Assets/placeholder_jogador.png" id="2_feyax"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ka2pi"]
+size = Vector2(1175, 21)
+
+[sub_resource type="CanvasTexture" id="CanvasTexture_omtrn"]
+normal_texture = ExtResource("2_feyax")
 
 [node name="Tutorial" type="Node2D"]
 
 [node name="Player" parent="." instance=ExtResource("1_ka2pi")]
+
+[node name="chao" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="chao"]
+position = Vector2(9.5, 22.5)
+shape = SubResource("RectangleShape2D_ka2pi")
+debug_color = Color(0.91149116, 0.00010145962, 0.72819674, 0.41960785)
+
+[node name="Sprite2D" type="Sprite2D" parent="chao/CollisionShape2D"]
+position = Vector2(-31.49999, -0.5000005)
+scale = Vector2(474.00003, 15.999999)
+texture = SubResource("CanvasTexture_omtrn")
