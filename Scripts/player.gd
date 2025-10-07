@@ -4,7 +4,7 @@ class_name Player
 
 # -- Configurações de movimento --
 @export var velocidade: float = 80.0
-@export var multiplicador_corrida: float = 2.0  # Reduzido para ser mais balanceado
+@export var multiplicador_corrida: float = 2.0
 @export var forca_pulo: float = 200.0
 @export var gravidade: float = 600.0
 
@@ -27,20 +27,19 @@ var pode_atirar: bool = true
 # -- Sistema de vida --
 @export var vida_maxima: int = 3
 var vida_atual: int
-var invencivel: bool = false
-@export var tempo_invencibilidade: float = 1.0
+
+# -- Sinal pra UI --
+signal vida_alterada(vida_atual)
 
 func _ready() -> void:
 	vida_atual = vida_maxima
 	# Garante que comece com a animação idle
+	vida_alterada.emit(vida_atual)
 	sprite_animado.play("idle")
 
 func _physics_process(delta: float) -> void:
 	if morto:
 		return
-	
-	print("is_on_floor(): ", is_on_floor(), " | Velocity Y: ", velocity.y)
-
 	# Aplica gravidade
 	if not is_on_floor():
 		velocity.y += gravidade * delta
@@ -63,7 +62,7 @@ func _physics_process(delta: float) -> void:
 	var direcao_x = 0.0
 	
 	# Sistema de corrida - verifica inputs específicos de corrida
-	if Input.is_action_pressed("running_direita"):
+	if Input.is_action_pressed("runnin_direita"):
 		direcao_x = 1.0
 		esta_correndo = true
 	elif Input.is_action_pressed("running_esquerda"):
@@ -89,15 +88,53 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 	atualizar_animacoes()
 
-func atualizar_animacoes() -> void:
+# -- Função de Dano --
+func dano_jogador() -> void:
 	if morto:
+		return
+		
+	# Aplica dano
+	vida_atual -= 1
+	vida_alterada.emit(vida_atual)
+	
+	print("Jogador Tomou dano Vida: ", vida_atual)
+	
+	# Verifica morte
+	if vida_atual <= 0:
+		morrer()
+		return
+	
+	# Efeito de piscar ao tomar dano
+	comecar_piscar()
+
+func comecar_piscar() -> void:
+	# Pisca o sprite por 0.5 segundos
+	var duracao_piscar = 0.5
+	var tempo_decorrido = 0.0
+	var intervalo_piscar = 0.1
+	
+	while tempo_decorrido < duracao_piscar:
+		sprite_animado.visible = !sprite_animado.visible
+		await get_tree().create_timer(intervalo_piscar).timeout
+		tempo_decorrido += intervalo_piscar
+	
+	# Garante que fique visível no final
+	sprite_animado.visible = true
+
+func curar(cura: int = 1) -> void:
+	vida_atual = min(vida_atual + cura, vida_maxima)
+	vida_alterada.emit(vida_atual)
+	print("Jogador curado! Vida: ", vida_atual)
+
+func atualizar_animacoes() -> void:
+	if morto:	
 		return
 	
 	# Atualiza direção do sprite baseado no input ou velocidade
 	var direcao_x = 0.0
 	
 	# Prioriza o input de corrida para determinar a direção
-	if Input.is_action_pressed("running_direita"):
+	if Input.is_action_pressed("runnin_direita"):
 		direcao_x = 1.0
 	elif Input.is_action_pressed("running_esquerda"):
 		direcao_x = -1.0
@@ -115,18 +152,18 @@ func atualizar_animacoes() -> void:
 		if velocity.x != 0:
 			# Andando ou correndo
 			if esta_correndo:
-				sprite_animado.play("run")  # Animação de corrida
+				sprite_animado.play("run")
 			else:
-				sprite_animado.play("run")  # Animação de andar (pode ser "walk" se tiver)
+				sprite_animado.play("run")
 		else:
 			# Parado
 			sprite_animado.play("idle")
 	else:
 		# No ar
 		if velocity.y < 0:
-			sprite_animado.play("jump")  # Subindo
+			sprite_animado.play("jump")
 		else:
-			sprite_animado.play("jump")  # Descendo
+			sprite_animado.play("jump")
 
 func morrer() -> void:
 	if morto:

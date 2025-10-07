@@ -1,0 +1,67 @@
+[gd_scene load_steps=10 format=3 uid="uid://b86sysfpxcrl8"]
+
+[ext_resource type="Script" uid="uid://dhifnpro0xaeo" path="res://Scripts/projectiles/projectile_enemy_1.gd" id="1_nt50p"]
+[ext_resource type="Texture2D" uid="uid://105ebia6oef5" path="res://Assets/projectiles_placeholder.png" id="2_wywom"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_667mn"]
+atlas = ExtResource("2_wywom")
+region = Rect2(0, 192, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v2ydi"]
+atlas = ExtResource("2_wywom")
+region = Rect2(64, 192, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k8jn6"]
+atlas = ExtResource("2_wywom")
+region = Rect2(128, 192, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g07ui"]
+atlas = ExtResource("2_wywom")
+region = Rect2(192, 192, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_uqx8h"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_667mn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v2ydi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k8jn6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g07ui")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wwplr"]
+size = Vector2(14, 12)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_wwplr"]
+radius = 21.0
+
+[node name="ProjectileEnemy1" type="CharacterBody2D" groups=["projetil"]]
+script = ExtResource("1_nt50p")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(1, -1)
+sprite_frames = SubResource("SpriteFrames_uqx8h")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 1)
+shape = SubResource("RectangleShape2D_wwplr")
+
+[node name="EnemyDetectionArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyDetectionArea"]
+shape = SubResource("CircleShape2D_wwplr")
+
+[node name="LifeTimer" type="Timer" parent="."]
+
+[connection signal="body_entered" from="EnemyDetectionArea" to="." method="_on_enemy_detection_area_body_entered"]
+[connection signal="timeout" from="LifeTimer" to="." method="_on_life_timer_timeout"]
