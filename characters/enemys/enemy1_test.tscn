@@ -1,7 +1,8 @@
-[gd_scene load_steps=27 format=3 uid="uid://b0qpueovpg60v"]
+[gd_scene load_steps=28 format=3 uid="uid://b0qpueovpg60v"]
 
 [ext_resource type="Script" uid="uid://sno6cgvtdmk5" path="res://Scripts/Enemys/enemy_1_test.gd" id="1_puib1"]
 [ext_resource type="Texture2D" uid="uid://bv7iun0opl2me" path="res://Assets/placeholder_enemy.png" id="2_84w7u"]
+[ext_resource type="PackedScene" uid="uid://b86sysfpxcrl8" path="res://Resources/projectiles/projectile_enemy1.tscn" id="2_fa73k"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8jb2y"]
 atlas = ExtResource("2_84w7u")
@@ -178,6 +179,7 @@ radius = 122.03688
 
 [node name="Enemy1Test" type="CharacterBody2D" groups=["inimigos"]]
 script = ExtResource("1_puib1")
+projectile_scene = ExtResource("2_fa73k")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_tcik0")
@@ -191,9 +193,10 @@ rotation = 1.5707964
 shape = SubResource("CapsuleShape2D_84w7u")
 
 [node name="hitbox" type="Area2D" parent="."]
+scale = Vector2(2.4400015, 1.8000005)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="hitbox"]
-position = Vector2(2.5, -9.5)
+position = Vector2(2.5, -9.500001)
 shape = SubResource("RectangleShape2D_84w7u")
 
 [node name="PlayerDetectionArea" type="Area2D" parent="."]
@@ -203,6 +206,7 @@ shape = SubResource("CircleShape2D_84w7u")
 
 [node name="shoot_point" type="Marker2D" parent="."]
 
+[connection signal="area_entered" from="hitbox" to="." method="_on_hitbox_area_entered"]
 [connection signal="body_entered" from="hitbox" to="." method="_on_hitbox_body_entered"]
 [connection signal="body_entered" from="PlayerDetectionArea" to="." method="_on_player_detection_area_body_entered"]
 [connection signal="body_exited" from="PlayerDetectionArea" to="." method="_on_player_detection_area_body_exited"]

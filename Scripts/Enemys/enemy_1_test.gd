@@ -21,7 +21,10 @@ func _ready():
 	add_to_group("inimigos")
 	vida_atual = vida_maxima
 
-func _physics_process(delta):
+func _physics_process(_delta):
+	if vida_atual == 0:
+		morrer()
+	
 	if morto:
 		return  # Bloqueia tudo se já morreu
 	
@@ -47,8 +50,7 @@ func _physics_process(delta):
 		anim.flip_h = direcao.x < 0
 		anim.play("run")
 
-	if vida_atual == 0:
-		morrer()
+	
 
 func atirar():
 	if not pode_atirar or projectile_scene == null or player == null:
@@ -78,10 +80,11 @@ func morrer():
 	await get_tree().create_timer(2).timeout
 	queue_free()
 	
-func _on_hitbox_body_entered(body):
-	if body.is_in_group("projetil"):
-		dano() #da dano no inimigo
-		body.queue_free() #faz sumir o projetil quando atinge o inimigo
+#func _on_hitbox_body_entered(body):
+	#if body.is_in_group("projetil"):
+		#print('oi')
+		#dano() #da dano no inimigo
+		#body.queue_free() #faz sumir o projetil quando atinge o inimigo
 
 func _on_player_detection_area_body_entered(body):
 	if body.is_in_group("player"):
@@ -91,3 +94,10 @@ func _on_player_detection_area_body_entered(body):
 func _on_player_detection_area_body_exited(body):
 	if body == player:
 		player = null
+
+
+func _on_hitbox_area_entered(area: Area2D) -> void:
+	if area.is_in_group("projetil"):
+		print('oi')
+		dano() #da dano no inimigo
+		area.queue_free()

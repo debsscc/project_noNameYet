@@ -114,7 +114,7 @@ projectile_scene = ExtResource("2_tory2")
 [node name="animation_player" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -25)
 sprite_frames = SubResource("SpriteFrames_dnjla")
-animation = &"jump"
+animation = &"idle"
 
 [node name="collision" type="CollisionShape2D" parent="."]
 position = Vector2(0, 5.0000005)

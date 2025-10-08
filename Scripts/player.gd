@@ -10,11 +10,12 @@ class_name Player
 
 # -- Referências --
 @onready var sprite_animado: AnimatedSprite2D = $animation_player
+
 @onready var shoot_point: Node2D = $ShootPoint
 @onready var shoot_point_position_x = shoot_point.position.x
 
 # -- Sistema de vida --
-@export var vida_maxima: int = 3
+@export var vida_maxima: int = 30
 @export var vida_atual: int = vida_maxima
 
 # -- Sistema de tiro --
@@ -48,6 +49,9 @@ func _ready() -> void:
 		sprite_animado.sprite_frames.set_animation_loop("jump", false)
 
 func _physics_process(delta: float) -> void:
+	if vida_atual <= 0:
+		morrer()
+	
 	if morto:
 		return
 	
@@ -118,15 +122,20 @@ func dano_jogador() -> void:
 	vida_atual -= 10
 	vida_alterada.emit(vida_atual)
 	
+	comecar_piscar()
+	
+	if vida_atual <= 0:
+		morrer()
+	
 	print("Jogador Tomou dano Vida: ", vida_atual)
 	
 	# Verifica morte
-	if vida_atual <= 0:
-		morrer()
-		return
+	#if vida_atual <= 0:
+		#morrer()
+		#return
 	
 	# Efeito de piscar ao tomar dano
-	comecar_piscar()
+	
 
 func comecar_piscar() -> void:
 	# Pisca o sprite por 0.5 segundos
@@ -219,16 +228,17 @@ func atualizar_animacoes() -> void:
 			sprite_animado.play("jump")
 
 func morrer() -> void:
-	if morto:
-		return
+	#if morto:
+		#return
 	morto = true
 	velocity = Vector2.ZERO	
-
-	if sprite_animado.has_animation("idle"):
+	
+	if sprite_animado.sprite_frames.has_animation("idle"):
 		sprite_animado.play("idle")
 	
 	await get_tree().create_timer(2).timeout
-	get_tree().reload_current_scene()
+	
+	get_tree().quit()
 
 #func save_checkpoint():
 	#checkpoint_position = global_position
