@@ -1,7 +1,11 @@
-[gd_scene load_steps=27 format=3 uid="uid://b0qpueovpg60v"]
+[gd_scene load_steps=29 format=3 uid="uid://b0qpueovpg60v"]
 
 [ext_resource type="Script" uid="uid://sno6cgvtdmk5" path="res://Scripts/Enemys/enemy_1_test.gd" id="1_puib1"]
 [ext_resource type="Texture2D" uid="uid://bv7iun0opl2me" path="res://Assets/placeholder_enemy.png" id="2_84w7u"]
+[ext_resource type="Script" uid="uid://dhifnpro0xaeo" path="res://Scripts/projectiles/projectile_enemy_1.gd" id="2_fa73k"]
+
+[sub_resource type="PackedScene" id="PackedScene_4ymbu"]
+script = ExtResource("2_fa73k")
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8jb2y"]
 atlas = ExtResource("2_84w7u")
@@ -178,6 +182,7 @@ radius = 122.03688
 
 [node name="Enemy1Test" type="CharacterBody2D" groups=["inimigos"]]
 script = ExtResource("1_puib1")
+projectile_scene = SubResource("PackedScene_4ymbu")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_tcik0")

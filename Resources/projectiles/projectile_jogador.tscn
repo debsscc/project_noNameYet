@@ -1,0 +1,70 @@
+[gd_scene load_steps=10 format=3 uid="uid://chf1udwner0jg"]
+
+[ext_resource type="Texture2D" uid="uid://105ebia6oef5" path="res://Assets/projectiles_placeholder.png" id="1_eab7i"]
+[ext_resource type="Script" uid="uid://cc71ie2jfglqs" path="res://Scripts/projectiles/projectile_jogador.gd" id="1_phbm6"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_phbm6"]
+atlas = ExtResource("1_eab7i")
+region = Rect2(0, 256, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wrpgi"]
+atlas = ExtResource("1_eab7i")
+region = Rect2(64, 256, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4i651"]
+atlas = ExtResource("1_eab7i")
+region = Rect2(128, 256, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_urx3q"]
+atlas = ExtResource("1_eab7i")
+region = Rect2(192, 256, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_7vekh"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_phbm6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wrpgi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4i651")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_urx3q")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_eab7i"]
+size = Vector2(54, 56)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_phbm6"]
+radius = 67.51666
+
+[node name="ProjectileJogador" type="CharacterBody2D" groups=["projetil"]]
+script = ExtResource("1_phbm6")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(-1, -7)
+scale = Vector2(4.0625, 4.4375)
+sprite_frames = SubResource("SpriteFrames_7vekh")
+
+[node name="collision" type="CollisionShape2D" parent="."]
+position = Vector2(-1, 2)
+shape = SubResource("RectangleShape2D_eab7i")
+disabled = true
+
+[node name="Enemy" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Enemy"]
+position = Vector2(-1.5, 1.5)
+shape = SubResource("CircleShape2D_phbm6")
+
+[node name="LifeTimer" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+autostart = true
