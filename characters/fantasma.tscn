@@ -1,0 +1,37 @@
+[gd_scene load_steps=6 format=3 uid="uid://b18nvk7g1yvwo"]
+
+[ext_resource type="Script" uid="uid://ctjygevc1f1su" path="res://Scripts/fantasma.gd" id="1_nw4yv"]
+[ext_resource type="Texture2D" uid="uid://begikdsn0o410" path="res://Assets/FANTASMINHA_placeholder.png" id="1_yv4ds"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nw4yv"]
+atlas = ExtResource("1_yv4ds")
+region = Rect2(0, 0, 2481, 3508)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_wuvpw"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nw4yv")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_vwd17"]
+radius = 16.0
+
+[node name="Fantasma" type="Node2D"]
+script = ExtResource("1_nw4yv")
+
+[node name="animation_fantasma" type="AnimatedSprite2D" parent="."]
+scale = Vector2(0.007894372, 0.008063528)
+sprite_frames = SubResource("SpriteFrames_wuvpw")
+animation = &"idle"
+
+[node name="detection_enemy" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="detection_enemy"]
+shape = SubResource("CircleShape2D_vwd17")
+
+[connection signal="area_entered" from="detection_enemy" to="." method="_on_detection_enemy_area_entered"]

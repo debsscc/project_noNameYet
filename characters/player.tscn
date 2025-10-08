@@ -1,9 +1,10 @@
-[gd_scene load_steps=19 format=3 uid="uid://beby82wnfkt4d"]
+[gd_scene load_steps=20 format=3 uid="uid://beby82wnfkt4d"]
 
 [ext_resource type="Script" uid="uid://cfanrscmj8qn4" path="res://Scripts/player.gd" id="1_dnjla"]
 [ext_resource type="Texture2D" uid="uid://ciwjmob4fnhyy" path="res://Assets/placeholder_jogador.png" id="2_3eadt"]
 [ext_resource type="PackedScene" uid="uid://chf1udwner0jg" path="res://Resources/projectiles/projectile_jogador.tscn" id="2_tory2"]
 [ext_resource type="Script" uid="uid://daldeb32tto1" path="res://Scripts/camera_jogador.gd" id="4_x0jl3"]
+[ext_resource type="PackedScene" uid="uid://b18nvk7g1yvwo" path="res://characters/fantasma.tscn" id="5_evndh"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3eadt"]
 atlas = ExtResource("2_3eadt")
@@ -105,14 +106,22 @@ radius = 6.9997334
 height = 33.998707
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_6p3mc"]
-radius = 20.0
+radius = 37.01351
 
 [node name="Player" type="CharacterBody2D" groups=["player"]]
 script = ExtResource("1_dnjla")
+velocidade = null
+multiplicador_corrida = null
+forca_pulo = null
+gravidade = null
+time_max = null
+distancia_max = null
+vida_maxima = null
 projectile_scene = ExtResource("2_tory2")
 
 [node name="animation_player" type="AnimatedSprite2D" parent="."]
-position = Vector2(0, -25)
+position = Vector2(-1, -47.000004)
+scale = Vector2(1.609375, 1.703125)
 sprite_frames = SubResource("SpriteFrames_dnjla")
 animation = &"idle"
 
@@ -124,8 +133,16 @@ shape = SubResource("CapsuleShape2D_6p3mc")
 [node name="hurtbox" type="Area2D" parent="."]
 
 [node name="collision" type="CollisionShape2D" parent="hurtbox"]
-position = Vector2(0, -11)
+position = Vector2(0, -31)
 shape = SubResource("CircleShape2D_6p3mc")
+
+[node name="Fantasma" parent="." instance=ExtResource("5_evndh")]
+position = Vector2(-52, -66)
+
+[node name="Line2D" type="Line2D" parent="."]
+points = PackedVector2Array(0, 0)
+width = 2.0
+default_color = Color(0, 0, 0.78431374, 0.003921569)
 
 [node name="camera_jogador" type="Camera2D" parent="."]
 script = ExtResource("4_x0jl3")

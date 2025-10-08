@@ -8,8 +8,16 @@ class_name Player
 @export var forca_pulo: float = 200.0
 @export var gravidade: float = 600.0
 
-# -- Referências --
+# -- Referências e Especial --
 @onready var sprite_animado: AnimatedSprite2D = $animation_player
+@onready var fantasma: Node2D = $Fantasma
+@onready var sprite: Sprite2D = $Sprite2D
+@onready var linha: Line2D = $Line2D
+@export var time_max: float = 1.5
+@export var distancia_max: float = 200.0
+
+var especial_possessao := false
+var time_holding := 0.0
 
 @onready var shoot_point: Node2D = $ShootPoint
 @onready var shoot_point_position_x = shoot_point.position.x
@@ -44,9 +52,12 @@ func _ready() -> void:
 	vida_alterada.emit(vida_atual)
 	sprite_animado.play("idle")
 	
-	# Configura animações sem loop
 	if sprite_animado.sprite_frames.has_animation("jump"):
 		sprite_animado.sprite_frames.set_animation_loop("jump", false)
+
+	if fantasma:
+		fantasma.modo_ataque = false
+		fantasma.cursor_posicao = fantasma.global_position
 
 func _physics_process(delta: float) -> void:
 	if vida_atual <= 0:
@@ -61,7 +72,6 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity.y = 0
 	
-	# Pulo
 	if is_on_floor() and Input.is_action_just_pressed("jump"):
 		velocity.y = -forca_pulo
 	
@@ -89,6 +99,36 @@ func _physics_process(delta: float) -> void:
 	
 	move_and_slide()
 	
+	#Atualiza a linha entre o jogador e fantasma
+	atualizar_line()
+	
+
+	# -------------------------
+	# Ataque de possessão
+	# -------------------------
+	if Input.is_action_pressed("especial"):
+		if not especial_possessao:
+			especial_possessao = true
+			time_holding = 0.0
+
+		time_holding += delta
+		var t = min(time_holding / time_max, 1.0)
+		fantasma.modo_ataque = true
+		fantasma.cursor_posicao = fantasma.global_position + Vector2(
+	lerp(float(50), float(distancia_max), float(t)) * (-1 if sprite_animado.flip_h else 1),
+	0
+)
+	elif especial_possessao:
+		especial_possessao = false
+		fantasma.executar_ataque()
+
+func atualizar_line():
+	if linha and fantasma:
+		linha.clear_points()
+		linha.add_point(Vector2.ZERO)
+		linha.add_point(to_local(fantasma.global_position))
+		linha.modulate.a = 0.4 + 0.2 * sin(Time.get_ticks_msec() / 250.0)
+
 	# Controles de tiro
 	if Input.is_action_just_pressed("shoot") and municao > 0:
 		shoot()
@@ -126,17 +166,9 @@ func dano_jogador() -> void:
 	
 	if vida_atual <= 0:
 		morrer()
+		
 	
-	print("Jogador Tomou dano Vida: ", vida_atual)
-	
-	# Verifica morte
-	#if vida_atual <= 0:
-		#morrer()
-		#return
-	
-	# Efeito de piscar ao tomar dano
-	
-
+# Efeito de piscar ao tomar dano
 func comecar_piscar() -> void:
 	# Pisca o sprite por 0.5 segundos
 	var duracao_piscar = 0.5
