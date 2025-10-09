@@ -29,9 +29,9 @@ scale = Vector2(0.007894372, 0.008063528)
 sprite_frames = SubResource("SpriteFrames_wuvpw")
 animation = &"idle"
 
-[node name="detection_enemy" type="Area2D" parent="."]
+[node name="Area2D" type="Area2D" parent="."]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="detection_enemy"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 shape = SubResource("CircleShape2D_vwd17")
 
-[connection signal="area_entered" from="detection_enemy" to="." method="_on_detection_enemy_area_entered"]
+[connection signal="area_entered" from="Area2D" to="." method="_on_detection_enemy_area_entered"]
