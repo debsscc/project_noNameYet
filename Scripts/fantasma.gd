@@ -2,12 +2,7 @@ extends Node2D
 class_name Fantasma
 
 # -- Export e variáveis --
-@export var velocidade_seguir: float = 5.0
-@export var altura_entrada: float = 30.0
 var animando: bool = false
-var cursor_posicao: Vector2 = Vector2.ZERO
-@export var distancia_lateral: float = 20.0
-@export var tempo_paralisia: float = 2.0
 @export var passos : int = 6
 @export var tempo_entre_passos: float = 0.1
 
@@ -16,8 +11,13 @@ var modo_ataque: bool = false
 # -- Referências --
 @onready var jogador_ref = get_parent()
 @onready var area_ataque: Area2D = $Area2D  
-@onready var cursor: Node2D = $Cursor
 @onready var sprite: AnimatedSprite2D = $animation_fantasma
+
+func _ready():
+	jogador_ref = get_parent()
+	modo_ataque = false
+	if area_ataque:
+		area_ataque.monitoring = false
 
 # -- Funções auxiliares --
 func _entrar_no_chao() -> void:
@@ -102,14 +102,7 @@ func _retornar_para_jogador() -> void:
 		await get_tree().process_frame
 	animando = false
 
-func _ready():
-	if not cursor:
-		cursor = Node2D.new()
-		add_child(cursor)
-	jogador_ref = get_parent()
-	modo_ataque = false
-	if area_ataque:
-		area_ataque.monitoring = false
+
 
 func _process(delta: float) -> void:
 	if animando:

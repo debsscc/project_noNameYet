@@ -178,6 +178,8 @@ size = Vector2(49, 53)
 radius = 122.03688
 
 [node name="Enemy1Test" type="CharacterBody2D" groups=["inimigos"]]
+collision_layer = 4
+collision_mask = 4
 script = ExtResource("1_puib1")
 projectile_scene = ExtResource("2_fa73k")
 

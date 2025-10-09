@@ -1,10 +1,12 @@
-[gd_scene load_steps=20 format=3 uid="uid://beby82wnfkt4d"]
+[gd_scene load_steps=30 format=3 uid="uid://beby82wnfkt4d"]
 
 [ext_resource type="Script" uid="uid://cfanrscmj8qn4" path="res://Scripts/player.gd" id="1_dnjla"]
 [ext_resource type="Texture2D" uid="uid://ciwjmob4fnhyy" path="res://Assets/placeholder_jogador.png" id="2_3eadt"]
 [ext_resource type="PackedScene" uid="uid://chf1udwner0jg" path="res://Resources/projectiles/projectile_jogador.tscn" id="2_tory2"]
+[ext_resource type="Script" uid="uid://ctjygevc1f1su" path="res://Scripts/fantasma.gd" id="4_h1q25"]
 [ext_resource type="Script" uid="uid://daldeb32tto1" path="res://Scripts/camera_jogador.gd" id="4_x0jl3"]
-[ext_resource type="PackedScene" uid="uid://b18nvk7g1yvwo" path="res://characters/fantasma.tscn" id="5_evndh"]
+[ext_resource type="Texture2D" uid="uid://begikdsn0o410" path="res://Assets/FANTASMINHA_placeholder.png" id="5_j31ep"]
+[ext_resource type="Texture2D" uid="uid://jjci4yw8illv" path="res://icon.svg" id="6_j31ep"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3eadt"]
 atlas = ExtResource("2_3eadt")
@@ -101,22 +103,126 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_6p3mc"]
-radius = 6.9997334
-height = 33.998707
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_evndh"]
+size = Vector2(60.550323, 42.02462)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_6p3mc"]
 radius = 37.01351
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_nw4yv"]
+atlas = ExtResource("5_j31ep")
+region = Rect2(0, 0, 2481, 3508)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_wuvpw"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nw4yv")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_vwd17"]
+radius = 16.0
+
+[sub_resource type="Animation" id="Animation_nw4yv"]
+resource_name = "possessao_inicial"
+length = 0.47
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(-52, -66), Vector2(-52, 17.995)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("animation_fantasma:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.41),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_h1q25"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-52, -66)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("animation_fantasma:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_j31ep"]
+resource_name = "possessao_medoi"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.02333334, 1.88),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(-52, 17.995), Vector2(200, 17.995)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("animation_fantasma:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.03333333),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_6t23p"]
+resource_name = "possessao_final"
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_wuvpw"]
+_data = {
+&"RESET": SubResource("Animation_h1q25"),
+&"possessao_final": SubResource("Animation_6t23p"),
+&"possessao_inicial": SubResource("Animation_nw4yv"),
+&"possessao_medoi": SubResource("Animation_j31ep")
+}
+
 [node name="Player" type="CharacterBody2D" groups=["player"]]
 script = ExtResource("1_dnjla")
-velocidade = null
-multiplicador_corrida = null
-forca_pulo = null
-gravidade = null
-time_max = null
-distancia_max = null
-vida_maxima = null
 projectile_scene = ExtResource("2_tory2")
 
 [node name="animation_player" type="AnimatedSprite2D" parent="."]
@@ -126,21 +232,53 @@ sprite_frames = SubResource("SpriteFrames_dnjla")
 animation = &"idle"
 
 [node name="collision" type="CollisionShape2D" parent="."]
-position = Vector2(0, 5.0000005)
+position = Vector2(-0.99336773, -23.258774)
 rotation = 1.579535
-shape = SubResource("CapsuleShape2D_6p3mc")
+scale = Vector2(0.9999997, 0.9999997)
+shape = SubResource("RectangleShape2D_evndh")
 
 [node name="hurtbox" type="Area2D" parent="."]
+collision_layer = 4
+collision_mask = 4
 
 [node name="collision" type="CollisionShape2D" parent="hurtbox"]
 position = Vector2(0, -31)
 shape = SubResource("CircleShape2D_6p3mc")
 
-[node name="Fantasma" parent="." instance=ExtResource("5_evndh")]
+[node name="Fantasma" type="Node2D" parent="."]
 position = Vector2(-52, -66)
+script = ExtResource("4_h1q25")
+velocidade_seguir = null
+altura_entrada = null
+distancia_lateral = null
+tempo_paralisia = null
+passos = null
+tempo_entre_passos = null
+
+[node name="animation_fantasma" type="AnimatedSprite2D" parent="Fantasma"]
+scale = Vector2(0.007894372, 0.008063528)
+sprite_frames = SubResource("SpriteFrames_wuvpw")
+animation = &"idle"
+
+[node name="Area2D" type="Area2D" parent="Fantasma/animation_fantasma"]
+scale = Vector2(126.67252, 124.0152)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Fantasma/animation_fantasma/Area2D"]
+shape = SubResource("CircleShape2D_vwd17")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Fantasma"]
+libraries = {
+&"": SubResource("AnimationLibrary_wuvpw")
+}
+
+[node name="TextureRect" type="TextureRect" parent="Fantasma"]
+offset_right = 128.0
+offset_bottom = 128.0
+scale = Vector2(0.115, 0.115)
+texture = ExtResource("6_j31ep")
 
 [node name="Line2D" type="Line2D" parent="."]
-points = PackedVector2Array(0, 0)
+points = PackedVector2Array(0, 0, -51, -67)
 width = 2.0
 default_color = Color(0, 0, 0.78431374, 0.003921569)
 
@@ -151,3 +289,4 @@ script = ExtResource("4_x0jl3")
 
 [connection signal="area_entered" from="hurtbox" to="." method="_on_hurtbox_area_entered"]
 [connection signal="body_entered" from="hurtbox" to="." method="_on_hurtbox_body_entered"]
+[connection signal="area_entered" from="Fantasma/animation_fantasma/Area2D" to="Fantasma" method="_on_detection_enemy_area_entered"]

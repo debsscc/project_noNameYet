@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://b18nvk7g1yvwo"]
+[gd_scene load_steps=8 format=3 uid="uid://b18nvk7g1yvwo"]
 
 [ext_resource type="Script" uid="uid://ctjygevc1f1su" path="res://Scripts/fantasma.gd" id="1_nw4yv"]
 [ext_resource type="Texture2D" uid="uid://begikdsn0o410" path="res://Assets/FANTASMINHA_placeholder.png" id="1_yv4ds"]
@@ -21,17 +21,39 @@ animations = [{
 [sub_resource type="CircleShape2D" id="CircleShape2D_vwd17"]
 radius = 16.0
 
+[sub_resource type="Animation" id="Animation_nw4yv"]
+resource_name = "possessao_inicial"
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_wuvpw"]
+_data = {
+&"possessao_inicial": SubResource("Animation_nw4yv")
+}
+
 [node name="Fantasma" type="Node2D"]
 script = ExtResource("1_nw4yv")
+velocidade_seguir = null
+altura_entrada = null
+distancia_lateral = null
+tempo_paralisia = null
+passos = null
+tempo_entre_passos = null
 
 [node name="animation_fantasma" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.007894372, 0.008063528)
 sprite_frames = SubResource("SpriteFrames_wuvpw")
 animation = &"idle"
 
-[node name="Area2D" type="Area2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="animation_fantasma"]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+[node name="Area2D" type="Area2D" parent="animation_fantasma"]
+scale = Vector2(126.67252, 124.0152)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="animation_fantasma/Area2D"]
 shape = SubResource("CircleShape2D_vwd17")
 
-[connection signal="area_entered" from="Area2D" to="." method="_on_detection_enemy_area_entered"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_wuvpw")
+}
+
+[connection signal="area_entered" from="animation_fantasma/Area2D" to="." method="_on_detection_enemy_area_entered"]

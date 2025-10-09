@@ -11,7 +11,6 @@ class_name Player
 # -- Referências e Especial --
 @onready var sprite_animado: AnimatedSprite2D = $animation_player
 @onready var fantasma: Node2D = $Fantasma
-@onready var sprite: Sprite2D = $Sprite2D
 @onready var linha: Line2D = $Line2D
 @export var time_max: float = 1.5
 @export var distancia_max: float = 200.0

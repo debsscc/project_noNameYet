@@ -1,0 +1,136 @@
+[gd_scene load_steps=11 format=3 uid="uid://m1uaekg8k85j"]
+
+[ext_resource type="Texture2D" uid="uid://begikdsn0o410" path="res://Assets/FANTASMINHA_placeholder.png" id="1_4uyn5"]
+[ext_resource type="Script" uid="uid://wvu64ro6thfk" path="res://Scripts/teste_fantasma.gd" id="1_e8df2"]
+[ext_resource type="Texture2D" uid="uid://jjci4yw8illv" path="res://icon.svg" id="2_e8df2"]
+[ext_resource type="Script" uid="uid://dbteweifbaup7" path="res://coli.gd" id="3_1q1ge"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_7to6p"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_4uyn5")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_rd4cq"]
+size = Vector2(2233.333, 2099.722)
+
+[sub_resource type="Animation" id="Animation_i8fch"]
+resource_name = "dano"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(781.0001, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AnimatedSprite2D:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("AnimatedSprite2D:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.06666667, 0.33333334, 1.1, 1.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0.5686275), Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_j8eqv"]
+resource_name = "idle"
+
+[sub_resource type="Animation" id="Animation_grw0q"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AnimatedSprite2D:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("AnimatedSprite2D:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0.5686275)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_aua6x"]
+_data = {
+&"RESET": SubResource("Animation_grw0q"),
+&"dano": SubResource("Animation_i8fch"),
+&"idle": SubResource("Animation_j8eqv")
+}
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource("1_e8df2")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+modulate = Color(1, 1, 1, 0.5686275)
+scale = Vector2(0.09, 0.09)
+sprite_frames = SubResource("SpriteFrames_7to6p")
+
+[node name="Sprite2D" type="Sprite2D" parent="AnimatedSprite2D"]
+texture = ExtResource("2_e8df2")
+
+[node name="Area2D" type="Area2D" parent="AnimatedSprite2D"]
+script = ExtResource("3_1q1ge")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AnimatedSprite2D/Area2D"]
+position = Vector2(-33.333008, -633.3334)
+scale = Vector2(1.0000001, 1.0000001)
+shape = SubResource("RectangleShape2D_rd4cq")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_aua6x")
+}
+
+[connection signal="body_entered" from="AnimatedSprite2D/Area2D" to="AnimatedSprite2D/Area2D" method="_on_body_entered"]
+[connection signal="animation_finished" from="AnimationPlayer" to="AnimatedSprite2D/Area2D" method="_on_animation_player_animation_finished"]
