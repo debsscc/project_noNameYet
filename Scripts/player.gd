@@ -10,7 +10,7 @@ class_name Player
 
 # -- Referências e Especial --
 @onready var sprite_animado: AnimatedSprite2D = $animation_player
-@onready var fantasma: Node2D = $Fantasma
+@onready var fantasma: Fantasma = $Fantasma
 @onready var linha: Line2D = $Line2D
 @export var time_max: float = 1.5
 @export var distancia_max: float = 200.0
@@ -119,8 +119,8 @@ func _physics_process(delta: float) -> void:
 )
 	elif especial_possessao:
 		especial_possessao = false
-		fantasma.executar_ataque()
-
+		fantasma.iniciar_possessao()
+		
 func atualizar_line():
 	if linha and fantasma:
 		linha.clear_points()

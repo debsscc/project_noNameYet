@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://b18nvk7g1yvwo"]
 
-[ext_resource type="Script" uid="uid://ctjygevc1f1su" path="res://Scripts/fantasma.gd" id="1_nw4yv"]
+[ext_resource type="Script" uid="uid://ctjygevc1f1su" path="res://Scripts/Fantasma.gd" id="1_nw4yv"]
 [ext_resource type="Texture2D" uid="uid://begikdsn0o410" path="res://Assets/FANTASMINHA_placeholder.png" id="1_yv4ds"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_nw4yv"]
@@ -31,12 +31,6 @@ _data = {
 
 [node name="Fantasma" type="Node2D"]
 script = ExtResource("1_nw4yv")
-velocidade_seguir = null
-altura_entrada = null
-distancia_lateral = null
-tempo_paralisia = null
-passos = null
-tempo_entre_passos = null
 
 [node name="animation_fantasma" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.007894372, 0.008063528)

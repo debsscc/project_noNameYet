@@ -2,158 +2,133 @@ extends Node2D
 class_name Fantasma
 
 # -- Export e variáveis --
-var animando: bool = false
-@export var passos : int = 6
+@export var velocidade_seguir: float = 5.0
+@export var distancia_lateral: float = 20.0 #o maximo clicando no input do especial
+@export var tempo_paralisia: float = 2.0
+@export var passos: int = 6
 @export var tempo_entre_passos: float = 0.1
+@export var distancia_max_posessao: float = 200 #distancia max em X
+@onready var max_hold_time: float = 1.5
 
+# -- Estados --
+var animando: bool = false
 var modo_ataque: bool = false
+var tempo_press: float = 0.0
+var posicao_inicial: Vector2 = Vector2.ZERO
+var cursor_posicao: Vector2 = Vector2.ZERO
 
 # -- Referências --
+@onready var anim_player: AnimationPlayer = $AnimationPlayer
 @onready var jogador_ref = get_parent()
-@onready var area_ataque: Area2D = $Area2D  
-@onready var sprite: AnimatedSprite2D = $animation_fantasma
+@onready var area_ataque: Area2D = $animation_fantasma/Area2D  
+#@onready var sprite: AnimatedSprite2D = $animation_fantasma
 
-func _ready():
-	jogador_ref = get_parent()
-	modo_ataque = false
+func _ready() -> void:
+	#desliga monitor quando presente
 	if area_ataque:
 		area_ataque.monitoring = false
 
 # -- Funções auxiliares --
-func _entrar_no_chao() -> void:
-	var pos_inicial = global_position
-	var pos_final = pos_inicial + Vector2(0, altura_entrada)
-	var duracao = 0.25
-	var tempo = 0.0
-	while tempo < duracao:
-		tempo += get_process_delta_time()
-		var t = tempo / duracao
-		sprite.position = pos_inicial.lerp(pos_final, t)
-		await get_tree().process_frame
-	sprite.visible = false
-
-func _spawn_cursor() -> void:
-	if cursor: 
-		cursor.visible = true
-		cursor.global_position = jogador_ref.global_position + Vector2(distancia_lateral * sign(jogador_ref.scale.x), 0)
-		cursor_posicao = cursor.global_position
-		await get_tree().create_timer(0.2).timeout
-
-func _andar_passos() -> void:
-	for i in range(passos):
-		print("Passo", i + 1)
-		await get_tree().create_timer(tempo_entre_passos).timeout
-
-func _surgir_do_chao() -> void:
-	sprite.visible = true
-	var pos_inicial = cursor.global_position + Vector2(0, altura_entrada)
-	var pos_final = cursor.global_position
-	var duracao = 0.25
-	var tempo = 0.0
-	while tempo < duracao:
-		tempo += get_process_delta_time()
-		var t = tempo / duracao
-		sprite.global_position = pos_inicial.lerp(pos_final, t)
-		await get_tree().process_frame
-
-func verificar_acerto_ou_erro() -> void:
-	if not area_ataque:
-		return
-	var bodies = area_ataque.get_overlapping_bodies()
-	var afetados = []
-	for c in bodies:
-		if c in afetados:
-			continue
-		if c.is_in_group("inimigos"):
-			if c.has_method("paralisar"):
-				c.paralisar(tempo_paralisia)
-			else:
-				c.paralisado = true
-				await get_tree().create_timer(tempo_paralisia).timeout
-				if is_instance_valid(c):
-					c.paralisado = false
-		elif c.is_in_group("interativo"):
-			if c.has_method("interagir"):
-				c.interagir()
-		afetados.append(c)
-
-func efeito_erro() -> void:
-	var pos_inicial = global_position
-	var pos_final = jogador_ref.global_position + Vector2(-distancia_lateral * sign(jogador_ref.scale.x), -20.0)
-	var duracao = 0.35
-	var tempo = 0.0
-	while tempo < duracao:
-		tempo += get_process_delta_time()
-		var t = tempo / duracao
-		var altura = sin(t * PI) * 12.0
-		global_position = pos_inicial.lerp(pos_final, t) + Vector2(0.0, -altura)
-		await get_tree().process_frame
-	animando = false
-
-func _retornar_para_jogador() -> void:
-	var pos_inicial = global_position
-	var pos_final = jogador_ref.global_position + Vector2(-distancia_lateral * sign(jogador_ref.scale.x), -10.0)
-	var duracao = 0.2
-	var tempo = 0.0
-	while tempo < duracao:
-		tempo += get_process_delta_time()
-		var t = tempo / duracao
-		global_position = pos_inicial.lerp(pos_final, t)
-		await get_tree().process_frame
-	animando = false
-
-
-
 func _process(delta: float) -> void:
+	#Detecta input especial
+	if Input.is_action_just_pressed("especial") and not animando:
+		iniciar_possessao()
+	
+	#enquanto segura, atualiza tempo_press e avança animação do meio
+	if Input.is_action_just_pressed("especial") and modo_ataque:
+		tempo_press += delta
+		var anim_name := "possessao_medoi"
+		if anim_player and anim_player.get_animation(anim_name):
+			if anim_player.current_animation != anim_name or not anim_player.is_playing():
+				anim_player.play(anim_name)
+			var anim_res = anim_player.get_animation(anim_name)
+			var anim_len = anim_res.length
+			var t = clamp(tempo_press / max_hold_time, 0.0, 1.0)
+			anim_player.seek(t * anim_len) #posiciona o timeline proporcionalmente
+	else:
+		#fallback
+		pass
+	if Input.is_action_just_released("especial") and modo_ataque:
+		finalizar_possessao()
+		
+	#comportamento normal de movimentação do fantasma
 	if animando:
 		return
 	if not modo_ataque:
 		seguir_jogador(delta)
 	else:
-		global_position = global_position.lerp(cursor_posicao, 8.0 * delta)
+		pass
 
+# -- Sequência de possessão --
+func iniciar_possessao() -> void:
+	animando = true
+	modo_ataque = true
+	posicao_inicial = global_position
+	tempo_press = 0.0
+	if anim_player:
+		anim_player.play("possessao_inicial")
+		while  anim_player.is_playing():
+			await get_tree().process_frame
+		
+		anim_player.play("possessao_medoi") 
+	animando = false
+	
+func finalizar_possessao() -> void:
+	if anim_player:
+		anim_player.pause()
+	var pos_final := global_position
+	if anim_player:
+		anim_player.play("possessao_final")
+		while anim_player.is_playing():
+			await get_tree().process_frame
+	
+	await verificar_acerto_ou_erro()
+	
+	if anim_player:
+		anim_player.play("RESET")
+		while anim_player.is_playing():
+			await get_tree().process_frame
+
+	global_position = posicao_inicial
+	modo_ataque = false
+	animando = false
+	tempo_press = 0.0
+	
 func seguir_jogador(delta: float) -> void:
 	if not jogador_ref:
 		return
+	
 	var dir = jogador_ref.scale.x if jogador_ref else 1.0
 	var alvo = jogador_ref.global_position + Vector2(distancia_lateral * sign(dir), -10.0)
 	global_position = global_position.lerp(alvo, velocidade_seguir * delta)
 
-func executar_ataque() -> void:
-	if animando:
+func verificar_acerto_ou_erro() -> void:
+	if not area_ataque:
 		return
-	animando = true
-	modo_ataque = true
+	
+	var bodies = area_ataque.get_overlapping_bodies()
+	var afetados: Array = []
+	
+	for c in bodies:
+			if c in afetados:
+				continue
+			if c.is_in_group("inimigos"):
+				if c.has_method("paralisar"):
+					c.paralisar(tempo_paralisia)
+				else:
+					c.paralisado = true
+					await get_tree().create_timer(tempo_paralisia).timeout
+					if is_instance_valid(c):
+						c.paralisado = false
+			elif c.is_in_group("interativo"):
+				if c.has_method("interagir"):
+					c.interagir()
+			afetados.append(c)
 
-	if area_ataque:
-		area_ataque.monitoring = true
-	
-	await _entrar_no_chao()
-	await _spawn_cursor()
-	await _andar_passos()
-	await _surgir_do_chao()
-	await verificar_acerto_ou_erro()
-	
-	if area_ataque:
-		area_ataque.monitoring = false
-	
-	animando = false
+func _retornar_para_jogador() -> void:
+	anim_player.play("RESET")  
+	await anim_player.animation_finished
 	modo_ataque = false
 
-func animar_ataque() -> void:
-	if animando:
-		return
-	animando = true
-
-	var pos_inicial = global_position
-	var pos_final = cursor_posicao  # corrigido typo aqui
-	var duracao = 0.25
-	var tempo = 0.0
-	while tempo < duracao:
-		tempo += get_process_delta_time()
-		var t = tempo / duracao
-		global_position = pos_inicial.lerp(pos_final, t)
-		await get_tree().process_frame
-
-	verificar_acerto_ou_erro()
-	animando = false
+#func efeito_erro() -> void:
+	#anim_player.play("erro")  # Caso queira uma animação visual de falha

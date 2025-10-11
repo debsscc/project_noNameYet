@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://cfanrscmj8qn4" path="res://Scripts/player.gd" id="1_dnjla"]
 [ext_resource type="Texture2D" uid="uid://ciwjmob4fnhyy" path="res://Assets/placeholder_jogador.png" id="2_3eadt"]
 [ext_resource type="PackedScene" uid="uid://chf1udwner0jg" path="res://Resources/projectiles/projectile_jogador.tscn" id="2_tory2"]
-[ext_resource type="Script" uid="uid://ctjygevc1f1su" path="res://Scripts/fantasma.gd" id="4_h1q25"]
+[ext_resource type="Script" uid="uid://ctjygevc1f1su" path="res://Scripts/Fantasma.gd" id="4_h1q25"]
 [ext_resource type="Script" uid="uid://daldeb32tto1" path="res://Scripts/camera_jogador.gd" id="4_x0jl3"]
 [ext_resource type="Texture2D" uid="uid://begikdsn0o410" path="res://Assets/FANTASMINHA_placeholder.png" id="5_j31ep"]
 [ext_resource type="Texture2D" uid="uid://jjci4yw8illv" path="res://icon.svg" id="6_j31ep"]
@@ -127,6 +127,36 @@ animations = [{
 [sub_resource type="CircleShape2D" id="CircleShape2D_vwd17"]
 radius = 16.0
 
+[sub_resource type="Animation" id="Animation_h1q25"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-52, -66)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("animation_fantasma:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_6t23p"]
+resource_name = "possessao_final"
+
 [sub_resource type="Animation" id="Animation_nw4yv"]
 resource_name = "possessao_inicial"
 length = 0.47
@@ -153,33 +183,6 @@ tracks/1/keys = {
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
-}
-
-[sub_resource type="Animation" id="Animation_h1q25"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(-52, -66)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("animation_fantasma:modulate")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(1, 1, 1, 1)]
 }
 
 [sub_resource type="Animation" id="Animation_j31ep"]
@@ -209,9 +212,6 @@ tracks/1/keys = {
 "update": 0,
 "values": [Color(1, 1, 1, 0)]
 }
-
-[sub_resource type="Animation" id="Animation_6t23p"]
-resource_name = "possessao_final"
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_wuvpw"]
 _data = {
@@ -248,12 +248,6 @@ shape = SubResource("CircleShape2D_6p3mc")
 [node name="Fantasma" type="Node2D" parent="."]
 position = Vector2(-52, -66)
 script = ExtResource("4_h1q25")
-velocidade_seguir = null
-altura_entrada = null
-distancia_lateral = null
-tempo_paralisia = null
-passos = null
-tempo_entre_passos = null
 
 [node name="animation_fantasma" type="AnimatedSprite2D" parent="Fantasma"]
 scale = Vector2(0.007894372, 0.008063528)
